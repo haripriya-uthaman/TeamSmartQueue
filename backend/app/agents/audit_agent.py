@@ -13,7 +13,9 @@ class AuditAgent:
     def __init__(self) -> None:
         self.service = gemini_service
 
+    # pyrefly: ignore [missing-import]
     from tenacity import retry, wait_exponential, stop_after_attempt
+    # pyrefly: ignore [missing-import]
     from google.genai.errors import APIError
 
     @retry(

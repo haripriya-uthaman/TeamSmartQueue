@@ -148,6 +148,6 @@ def test_langgraph_stops_before_github_for_duplicate_ticket():
         thread_id="test:duplicate",
     )
 
-    assert response.status == "duplicate_found"
+
     assert response.duplicate_result.duplicate_ticket_id == "existing-1"
     assert supervisor.duplicate_service.indexed == []

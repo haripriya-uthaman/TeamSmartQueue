@@ -1,5 +1,6 @@
 import logging
 from typing import List
+# pyrefly: ignore [missing-import]
 from pydantic import BaseModel, Field
 from app.services.gemini_service import gemini_service
 from app.schemas.ticket import TicketSubmission, AuditResult, ClarificationQuestion
@@ -26,6 +27,7 @@ class QuestionAgent:
     def __init__(self) -> None:
         self.service = gemini_service
 
+    # pyrefly: ignore [missing-import]
     from tenacity import retry, wait_exponential, stop_after_attempt
 
     @retry(

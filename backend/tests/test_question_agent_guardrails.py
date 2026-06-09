@@ -22,7 +22,7 @@ def test_question_agent_never_returns_more_than_three_questions():
     agent.service = FakeQuestionService()
 
     questions = agent.generate_questions(
-        TicketSubmission(title="Broken checkout", description="The checkout button is broken."),
+        TicketSubmission(title="Broken checkout", description="The checkout button is broken"),
         AuditResult(
             score=20,
             passed=False,
@@ -32,5 +32,5 @@ def test_question_agent_never_returns_more_than_three_questions():
         ),
     )
 
-    assert len(questions) == 3
+
     assert [question.question_id for question in questions] == ["q1", "q2", "q3"]

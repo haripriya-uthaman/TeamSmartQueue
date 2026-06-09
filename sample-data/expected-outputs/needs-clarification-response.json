@@ -1,0 +1,16 @@
+{
+  "status": "needs_clarification",
+  "ticket_id": 1,
+  "questions": [
+    {
+      "question_id": "q1",
+      "field_or_topic": "environment",
+      "question_text": "Which operating system, browser, app version, or platform were you using when the checkout submit button failed?"
+    },
+    {
+      "question_id": "q2",
+      "field_or_topic": "steps_to_reproduce",
+      "question_text": "Can you share the exact steps you followed before clicking the submit button?"
+    }
+  ]
+}

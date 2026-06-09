@@ -1,0 +1,4 @@
+{
+  "title": "Checkout submit button fails on Chrome",
+  "description": "Environment: Windows 11, Chrome 124. Steps to reproduce: 1. Open checkout. 2. Add a valid address. 3. Click Submit Order. Expected result: the order is submitted and confirmation page appears. Actual result: the button shows a spinner for 30 seconds and then displays 'Payment request timed out'."
+}

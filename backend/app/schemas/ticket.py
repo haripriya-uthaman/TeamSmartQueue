@@ -9,9 +9,43 @@ class TicketSubmission(BaseModel):
     """
     title: str = Field(..., description="The title of the support ticket", min_length=3, max_length=255)
     description: str = Field(..., description="The detailed explanation of the issue in the ticket", min_length=10)
+    environment: Optional[str] = Field(default=None, description="Environment details such as OS, browser, app version")
+    steps_to_reproduce: Optional[List[str]] = Field(default=None, description="Step-by-step instructions to reproduce the issue")
+    expected_result: Optional[str] = Field(default=None, description="What the user expected to happen")
+    actual_result: Optional[str] = Field(default=None, description="What actually happened")
+    priority: Optional[str] = Field(default=None, description="Ticket priority: Low, Medium, High, Critical")
+    severity: Optional[str] = Field(default=None, description="Ticket severity: Low, Medium, High, Critical")
+    module_name: Optional[str] = Field(default=None, description="Application module/component affected")
+    fix_version: Optional[str] = Field(default=None, description="Version in which the fix will be released")
+    affected_version: Optional[str] = Field(default=None, description="Version where the bug was found")
+    due_date: Optional[str] = Field(default=None, description="Target fix date (YYYY-MM-DD)")
+    client: Optional[str] = Field(default=None, description="Client or customer affected")
+    epic: Optional[str] = Field(default=None, description="Epic or feature group this ticket belongs to")
+    sprint: Optional[str] = Field(default=None, description="Sprint this ticket is assigned to")
+    attachments: Optional[List[str]] = Field(default=None, description="Base64-encoded image attachments for OCR analysis")
     metadata: Optional[Dict[str, Any]] = Field(default=None, description="Optional extra metadata associated with the ticket")
     submitted_by: Optional[str] = Field(default=None, description="Name/ID of the user who submitted the ticket")
     created_at: datetime = Field(default_factory=datetime.utcnow, description="Timestamp of submission")
+
+
+class TicketUpdate(BaseModel):
+    """All fields are optional — only provided ones are updated."""
+    title: Optional[str] = Field(default=None, min_length=3, max_length=255)
+    description: Optional[str] = Field(default=None, min_length=10)
+    environment: Optional[str] = None
+    steps_to_reproduce: Optional[List[str]] = None
+    expected_result: Optional[str] = None
+    actual_result: Optional[str] = None
+    priority: Optional[str] = None
+    severity: Optional[str] = None
+    module_name: Optional[str] = None
+    fix_version: Optional[str] = None
+    affected_version: Optional[str] = None
+    due_date: Optional[str] = None
+    client: Optional[str] = None
+    epic: Optional[str] = None
+    sprint: Optional[str] = None
+    status: Optional[str] = Field(default=None, description="Manual status transition: 'closed' or 'pending'")
 
 
 class AuditResult(BaseModel):

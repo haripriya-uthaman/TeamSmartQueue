@@ -5,6 +5,7 @@ from google import genai
 from google.genai.errors import APIError
 from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel
+from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
 
 from app.core.config import settings
 
@@ -28,7 +29,7 @@ class GeminiService:
     def __init__(self) -> None:
         self._client = None
         self._chat_models: dict[float, ChatGoogleGenerativeAI] = {}
-        self.model_name = "gemini-2.5-flash"
+        self.model_name = settings.GEMINI_MODEL
 
     @property
     def client(self) -> genai.Client:
@@ -65,6 +66,12 @@ class GeminiService:
             )
         return self._chat_models[temperature]
 
+    @retry(
+        wait=wait_exponential(multiplier=1, min=2, max=10),
+        stop=stop_after_attempt(5),
+        retry=retry_if_exception_type((APIError, Exception)),
+        reraise=True
+    )
     def generate_structured(
         self,
         prompt: str,
@@ -84,7 +91,48 @@ class GeminiService:
             return schema.model_validate(result)
         raise ValueError(f"Unexpected structured response type: {type(result)!r}")
 
-    from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type
+    def extract_text_from_images(self, base64_images: list[str]) -> str:
+        """
+        Uses Gemini Vision to extract text and ticket-relevant information from
+        one or more base64-encoded images (screenshots, error dialogs, logs, etc.).
+        Returns a combined OCR/description string for use in ticket auditing.
+        """
+        if not base64_images:
+            return ""
+
+        import base64 as _b64
+        from langchain_core.messages import HumanMessage
+
+        parts = [
+            {
+                "type": "text",
+                "text": (
+                    "You are an AI assistant helping with ticket quality analysis. "
+                    "The following images are attachments submitted with a bug/support ticket. "
+                    "For each image, extract ALL visible text (OCR), describe any error messages, "
+                    "stack traces, UI states, or relevant technical details visible. "
+                    "Output a structured summary that can be used to understand the ticket issue better."
+                ),
+            }
+        ]
+        for idx, b64 in enumerate(base64_images):
+            # Strip data-URL prefix if present
+            if "," in b64:
+                b64 = b64.split(",", 1)[1]
+            parts.append({
+                "type": "image_url",
+                "image_url": {"url": f"data:image/png;base64,{b64}"},
+            })
+
+        try:
+            model = self.chat_model(temperature=0.1)
+            response = model.invoke([HumanMessage(content=parts)])
+            result = str(response.content or "").strip()
+            logger.info("OCR extraction from %d image(s) completed (%d chars).", len(base64_images), len(result))
+            return result
+        except Exception as e:
+            logger.warning("Image OCR failed (non-fatal): %s", e)
+            return ""
 
     @retry(
         wait=wait_exponential(multiplier=1, min=2, max=10),

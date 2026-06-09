@@ -12,8 +12,14 @@ class Settings(BaseSettings):
     DEBUG: bool = Field(default=True)
     LOG_LEVEL: str = Field(default="INFO")
     
+    # Model provider toggle: 0 = Gemini (default), 1 = Groq
+    MODEL_PROVIDER: int = Field(default=0)
+
     # Credentials & API Keys
     GEMINI_API_KEY: str | None = Field(default=None)
+    GEMINI_MODEL: str = Field(default="gemini-2.5-flash")
+    GROQ_API_KEY: str | None = Field(default=None)
+    GROQ_MODEL: str = Field(default="llama-3.3-70b-versatile")
     GITHUB_TOKEN: str | None = Field(default=None)
     GITHUB_OWNER: str | None = Field(default=None)
     GITHUB_REPO: str | None = Field(default=None)
@@ -37,6 +43,11 @@ class Settings(BaseSettings):
                 return False
         return value
     
+    # CORS
+    CORS_ORIGINS: list[str] = Field(
+        default=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"]
+    )
+
     # Database Configuration
     DATABASE_URL: str = Field(default="sqlite+aiosqlite:///./ticket_auditor.db")
     CHROMA_DB_PATH: str = Field(default="./chroma_db")

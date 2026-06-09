@@ -2,21 +2,31 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  background: transparent;
+  width: 40px;
+  height: 40px;
+  background: var(--bg-card);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
   cursor: pointer;
   color: var(--text-secondary);
-  transition: all 0.15s ease;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .theme-toggle:hover {
   background: var(--bg-hover);
-  color: var(--text-primary);
-  border-color: var(--border-focus);
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: rotate(45deg) scale(1.05);
+  box-shadow: var(--shadow-sm), var(--shadow-glow);
 }
+
+.theme-toggle:active {
+  transform: scale(0.95);
+}
+
 .theme-toggle svg {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }

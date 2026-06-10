@@ -5,6 +5,8 @@ import Sidebar from './components/Sidebar';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
+import AllTicketsPage from './pages/AllTicketsPage';
+import SettingsPage from './pages/SettingsPage';
 
 function ProtectedRoute({ isAllowed, children }) {
   if (!isAllowed) return <Navigate to="/login" replace />;
@@ -81,7 +83,37 @@ function App() {
                 onLogout={handleLogout}
               />
               <main className="dashboard-main">
-                <DashboardPage token={token} />
+                <DashboardPage token={token} onLogout={handleLogout} />
+              </main>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* All Tickets (protected) */}
+      <Route
+        path="/tickets"
+        element={
+          <ProtectedRoute isAllowed={Boolean(token && user)}>
+            <div className="dashboard-layout">
+              <Sidebar theme={theme} onToggleTheme={toggleTheme} user={user} onLogout={handleLogout} />
+              <main className="dashboard-main">
+                <AllTicketsPage token={token} onLogout={handleLogout} />
+              </main>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Settings (protected) */}
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute isAllowed={Boolean(token && user)}>
+            <div className="dashboard-layout">
+              <Sidebar theme={theme} onToggleTheme={toggleTheme} user={user} onLogout={handleLogout} />
+              <main className="dashboard-main">
+                <SettingsPage user={user} />
               </main>
             </div>
           </ProtectedRoute>

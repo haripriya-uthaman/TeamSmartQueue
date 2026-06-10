@@ -28,7 +28,7 @@ export default function RegisterPage({ onRegister, theme, onToggleTheme }) {
     setLoading(true);
     try {
       // 1. Register
-      const regRes = await fetch('http://127.0.0.1:8000/api/v1/auth/register', {
+      const regRes = await fetch('/api/v1/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
@@ -44,7 +44,7 @@ export default function RegisterPage({ onRegister, theme, onToggleTheme }) {
       formData.append('username', email);
       formData.append('password', password);
 
-      const loginRes = await fetch('http://127.0.0.1:8000/api/v1/auth/login', {
+      const loginRes = await fetch('/api/v1/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: formData,
@@ -56,7 +56,7 @@ export default function RegisterPage({ onRegister, theme, onToggleTheme }) {
       const token = loginData.access_token;
 
       // 3. Fetch Profile
-      const userRes = await fetch('http://127.0.0.1:8000/api/v1/auth/me', {
+      const userRes = await fetch('/api/v1/auth/me', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 

@@ -11,3 +11,4 @@ backend/.env
 *.db
 backend/chroma/
 backend/chroma_db/
+.claude/

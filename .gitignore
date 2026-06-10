@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+node_modules/
+dist/
+
+# Local secrets and generated state
+.env
+backend/.env
+*.db
+backend/chroma/
+backend/chroma_db/

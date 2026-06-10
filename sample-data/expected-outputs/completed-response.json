@@ -1,0 +1,14 @@
+{
+  "status": "completed",
+  "ticket_id": 2,
+  "rewritten_ticket": {
+    "rewritten_title": "[Checkout] Submit Order times out on Chrome",
+    "rewritten_description": "## Description\nThe checkout submit action times out after the user clicks Submit Order.\n\n## Environment\nWindows 11, Chrome 124\n\n## Steps to Reproduce\n1. Open checkout.\n2. Add a valid address.\n3. Click Submit Order.\n\n## Expected Result\nThe order is submitted and the confirmation page appears.\n\n## Actual Result\nThe button shows a spinner for 30 seconds and then displays 'Payment request timed out'.",
+    "improvements_made": [
+      "Structured the report into standard bug sections.",
+      "Preserved only user-provided environment and error details."
+    ]
+  },
+  "github_issue_url": "https://github.com/example/repo/issues/7",
+  "github_issue_number": 7
+}

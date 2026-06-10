@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Plus, Inbox, CheckCircle2, AlertTriangle, XCircle, Loader2,
   Send, ExternalLink, ClipboardList, AlertCircle, GitBranch,
@@ -339,6 +340,9 @@ function EditForm({ ticket, token, onSaved, onCancel }) {
 
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 export default function DashboardPage({ token, onLogout }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [tickets, setTickets]           = useState([]);
   const [activeTicket, setActiveTicket] = useState(null);
   const [showNewPanel, setShowNewPanel] = useState(false);
@@ -449,8 +453,18 @@ export default function DashboardPage({ token, onLogout }) {
     finally { setLoading(false); }
   };
 
-  const openTicket = (id) => { setEditMode(false); fetchTicketDetails(id); };
+  const openTicket = useCallback((id) => { setEditMode(false); fetchTicketDetails(id); }, [fetchTicketDetails]);
   const closePanel = () => { setActiveTicket(null); setEditMode(false); setError(null); };
+
+  // Handle opening ticket from navigation state (e.g. from All Tickets page)
+  useEffect(() => {
+    if (location.state?.openTicketId) {
+      const ticketId = location.state.openTicketId;
+      openTicket(ticketId);
+      // Clear navigation state so that refresh or going back doesn't trigger open again
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state, location.pathname, openTicket, navigate]);
 
   const transitionStatus = async (newStatus) => {
     if (!activeTicket) return;

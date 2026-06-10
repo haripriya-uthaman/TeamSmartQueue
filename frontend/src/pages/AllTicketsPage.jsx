@@ -39,6 +39,15 @@ function SortIcon({ col, sortKey, sortDir }) {
     : <ChevronDown size={12} className="at-sort-icon" />;
 }
 
+function TH({ col, label, className = '', sortKey, sortDir, onSort }) {
+  return (
+    <th className={`at-th sortable ${className}`} onClick={() => onSort(col)}>
+      <span>{label}</span>
+      <SortIcon col={col} sortKey={sortKey} sortDir={sortDir} />
+    </th>
+  );
+}
+
 export default function AllTicketsPage({ token, onLogout }) {
   const [tickets, setTickets]   = useState([]);
   const [loading, setLoading]   = useState(true);
@@ -111,13 +120,6 @@ export default function AllTicketsPage({ token, onLogout }) {
     { key: 'failed', label: 'Failed', count: (counts.failed || 0) + (counts.closed || 0) },
   ].filter(tab => tab.key === 'all' || tab.count > 0);
 
-  const TH = ({ col, label, className = '' }) => (
-    <th className={`at-th sortable ${className}`} onClick={() => handleSort(col)}>
-      <span>{label}</span>
-      <SortIcon col={col} sortKey={sortKey} sortDir={sortDir} />
-    </th>
-  );
-
   return (
     <div className="at-page">
       {/* ── Top bar ── */}
@@ -189,12 +191,12 @@ export default function AllTicketsPage({ token, onLogout }) {
             <table className="at-table">
               <thead>
                 <tr>
-                  <TH col="id"         label="ID"       className="col-id" />
-                  <TH col="title"      label="Title"    className="col-title" />
-                  <TH col="priority"   label="Priority" className="col-priority" />
-                  <TH col="status"     label="Status"   className="col-status" />
-                  <TH col="score"      label="Score"    className="col-score" />
-                  <TH col="created_at" label="Created"  className="col-date" />
+                  <TH col="id"         label="ID"       className="col-id" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                  <TH col="title"      label="Title"    className="col-title" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                  <TH col="priority"   label="Priority" className="col-priority" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                  <TH col="status"     label="Status"   className="col-status" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                  <TH col="score"      label="Score"    className="col-score" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                  <TH col="created_at" label="Created"  className="col-date" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
                   <th className="at-th col-issue">GitHub</th>
                 </tr>
               </thead>

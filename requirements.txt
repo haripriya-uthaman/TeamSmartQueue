@@ -1,0 +1,38 @@
+# FastAPI Backend
+fastapi
+uvicorn
+
+# Data Validation
+pydantic
+python-dotenv
+
+# HTTP Requests
+requests
+httpx
+
+# AI / LLM Integration
+google-generativeai
+
+# GitHub Integration
+PyGithub
+
+# Database
+sqlalchemy
+
+# Vector Search / Embeddings
+chromadb
+
+# File Upload Support
+python-multipart
+
+# Testing
+pytest
+
+# Logging
+loguru
+
+# CORS
+starlette
+
+# Optional Utilities
+tqdm

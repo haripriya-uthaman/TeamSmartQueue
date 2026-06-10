@@ -12,7 +12,7 @@ class RewriteAgent:
     combining the original ticket data and any clarifying answers provided by the user.
     """
     def __init__(self) -> None:
-        self.service = gemini_service
+        self.gemini_client = gemini_service
 
     from tenacity import retry, wait_exponential, stop_after_attempt
 
@@ -71,7 +71,7 @@ Output must conform to the `RewrittenTicket` schema.
 """
 
         try:
-            rewritten_result = self.service.generate_structured(
+            rewritten_result = self.gemini_client.generate_structured(
                 prompt=prompt,
                 schema=RewrittenTicket,
                 temperature=0.2,

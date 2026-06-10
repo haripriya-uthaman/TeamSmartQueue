@@ -11,7 +11,7 @@ class AuditAgent:
     and identifies missing details using Gemini structure validation.
     """
     def __init__(self) -> None:
-        self.service = gemini_service
+        self.gemini_client = gemini_service
 
     # pyrefly: ignore [missing-import]
     from tenacity import retry, wait_exponential, stop_after_attempt
@@ -25,7 +25,9 @@ class AuditAgent:
     )
     def audit_ticket(self, ticket: TicketSubmission) -> AuditResult:
         """
-        Audits the provided ticket submission.
+        Audits the provided ticket submission by sending it to the Gemini model.
+        It analyzes the text based on 6 core quality metrics (Title, Description, Environment,
+        Steps, Expected Result, and Actual Result) and flags missing information.
         
         Args:
             ticket (TicketSubmission): The ticket data to evaluate.
@@ -33,15 +35,19 @@ class AuditAgent:
         Returns:
             AuditResult: The structured results of the audit.
         """
-        logger.info("Auditing ticket: '%s'", ticket.title)
+        logger.info("AuditAgent: Starting quality audit workflow for ticket: '%s'", ticket.title)
+        
+        # Strip inputs to remove any accidental leading or trailing whitespace
+        clean_title = ticket.title.strip()
+        clean_description = ticket.description.strip()
         
         prompt = f"""
 You are an expert software quality auditor and technical support reviewer.
 Your task is to analyze the quality of the following submitted support ticket.
-
-Ticket Title: {ticket.title}
-Ticket Description: {ticket.description}
-
+ 
+Ticket Title: {clean_title}
+Ticket Description: {clean_description}
+ 
 Analyze the ticket based on the presence, clarity, and precision of these 6 key sections:
 1. Title: Is the title clear, concise, and descriptive of the actual issue?
 2. Description: Is the detailed explanation clear and easy to follow?
@@ -59,7 +65,7 @@ RULES:
 """
 
         try:
-            audit_result = self.service.generate_structured(
+            audit_result = self.gemini_client.generate_structured(
                 prompt=prompt,
                 schema=AuditResult,
                 temperature=0.1,

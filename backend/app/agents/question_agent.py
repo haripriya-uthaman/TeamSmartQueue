@@ -25,7 +25,7 @@ class QuestionAgent:
     for the user based on missing information identified in the AuditResult.
     """
     def __init__(self) -> None:
-        self.service = gemini_service
+        self.gemini_client = gemini_service
 
     # pyrefly: ignore [missing-import]
     from tenacity import retry, wait_exponential, stop_after_attempt
@@ -81,7 +81,7 @@ RULES:
 """
 
         try:
-            wrapper = self.service.generate_structured(
+            wrapper = self.gemini_client.generate_structured(
                 prompt=prompt,
                 schema=QuestionListWrapper,
                 temperature=0.3,

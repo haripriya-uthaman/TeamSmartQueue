@@ -18,6 +18,11 @@ configure_langsmith_tracing()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """
+    Application lifecycle manager.
+    Performs essential startup operations such as database table creation, 
+    applying schema migrations, and validating external GitHub API configurations.
+    """
     # Startup actions: Create SQLite database tables if they do not exist
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -85,7 +90,10 @@ async def root():
     """
     Root endpoint with API name and links.
     """
+    welcome_message = f"Welcome to the {settings.PROJECT_NAME} API."
+    docs_link = f"{settings.API_V1_STR}/docs" if settings.DEBUG else "disabled"
+    
     return {
-        "message": f"Welcome to the {settings.PROJECT_NAME} API.",
-        "docs": f"{settings.API_V1_STR}/docs" if settings.DEBUG else "disabled",
+        "message": welcome_message,
+        "docs": docs_link,
     }

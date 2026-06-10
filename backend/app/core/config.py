@@ -33,6 +33,11 @@ class Settings(BaseSettings):
     @field_validator("DEBUG", "LANGSMITH_TRACING", "LANGCHAIN_TRACING_V2", mode="before")
     @classmethod
     def parse_boolish_env(cls, value):
+        """
+        Normalizes environment variables that can be specified as strings or booleans.
+        Converts string representations (e.g., 'true', '1', 'off') into Python boolean types
+        so that validation succeeds regardless of the format specified in .env files.
+        """
         if isinstance(value, bool):
             return value
         if isinstance(value, str):

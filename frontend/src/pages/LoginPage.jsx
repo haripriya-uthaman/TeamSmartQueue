@@ -26,7 +26,7 @@ export default function LoginPage({ onLogin, theme, onToggleTheme }) {
       formData.append('username', email);
       formData.append('password', password);
 
-      const loginRes = await fetch('http://127.0.0.1:8000/api/v1/auth/login', {
+      const loginRes = await fetch('/api/v1/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -43,7 +43,7 @@ export default function LoginPage({ onLogin, theme, onToggleTheme }) {
       const token = loginData.access_token;
 
       // Fetch user profile
-      const userRes = await fetch('http://127.0.0.1:8000/api/v1/auth/me', {
+      const userRes = await fetch('/api/v1/auth/me', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -79,7 +79,16 @@ export default function LoginPage({ onLogin, theme, onToggleTheme }) {
 
         <div className="auth-card">
           <form className="auth-form" onSubmit={handleSubmit}>
-            {error && <div className="auth-error">{error}</div>}
+            {error && (
+              <div className="auth-error">
+                {error}
+                {(error.toLowerCase().includes('incorrect') || error.toLowerCase().includes('invalid')) && (
+                  <div style={{marginTop:'0.5rem', fontSize:'0.8125rem', fontWeight:400}}>
+                    No account yet? <Link to="/register" style={{color:'inherit',fontWeight:600,textDecoration:'underline'}}>Create one here</Link>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="form-field">
               <label htmlFor="login-email">Email</label>

@@ -146,26 +146,35 @@ FastAPI Backend  ──►  Background Pipeline Execution (Async)
 
 ---
 
-## 5. Design Assumptions & Production Readiness
+## 5. Assumptions and Limitations
 
-The system has been architected to optimize local development, ensuring zero-configuration setups while remaining fully modular for enterprise deployment.
+This section outlines the design assumptions and technical scalability considerations built into the system architecture.
 
-### 1. Database Portability
-*   **Current State**: Utilizes SQLite via `aiosqlite` for light, zero-configuration local runs.
-*   **Production Readiness**: Developed entirely using the SQLAlchemy ORM. Migrating to PostgreSQL or MySQL requires only updating the connection string in the `.env` configuration.
+### System Assumptions
 
-### 2. High-Performance Local Embeddings
-*   **Current State**: Uses `BAAI/bge-small-en-v1.5` embeddings cached locally on the first run.
-*   **Production Readiness**: By conducting embeddings locally on device, external network roundtrips are eliminated, increasing query speed and keeping costs low.
+1. **Quality Audit Threshold**: A baseline score of 70/100 determines if a ticket contains sufficient detail for automated routing. This threshold is fully adjustable in the system configuration to match team-specific quality standards.
+2. **Duplicate Detection Tuning**: A cosine similarity threshold of 0.85, paired with the `BAAI/bge-small-en-v1.5` embedding model, is selected to optimize duplicate detection. This ensures a balanced identification of identical reports while avoiding false-positive matches.
+3. **Submission Mapping**: The system maps duplicate submissions to a single ticket context and increments the `affected_count` metric, allowing team leads to track issue prevalence without cluttering the workflow.
+4. **Integration Scope**: The GitHub integration is designed to interface with existing repositories using secure token-based authentication (`issues: write` scope), avoiding administrative repository mutations.
+5. **Media Processing Scope**: Image attachments (PNG, JPG, GIF, WebP) up to 5 MB are processed using Gemini's multimodal vision features to extract log entries and error descriptions. Non-image binaries are bypassed to keep the processing path lightweight.
+6. **Interaction Optimization**: Clarification questions are capped at a maximum of 3 per audit cycle to prevent user fatigue, with the option for the user to manually edit fields directly in the dashboard at any time.
 
-### 3. Media Ingestion Strategy
-*   **Current State**: Multi-modal vision supports files (PNG, JPG, WebP) up to 5MB.
-*   **Production Readiness**: Bypassing non-image binaries keeps the audit pipeline lightweight and protects backend processing nodes from high memory allocations.
+### Technical Considerations & Scalability Scope
 
-### 4. Interactive Guardrails
-*   **Current State**: Clarification sessions are capped at 3 questions per ticket.
-*   **Production Readiness**: Prevents user fatigue by ensuring a quick and deterministic feedback loop, with manual override tools available to the reporter in the dashboard interface at any stage.
+Rather than absolute limitations, the system has been architected with clear boundaries to enable zero-configuration local runs while remaining fully prepared for production scaling:
 
-### 5. Extensible Observability
-*   **Current State**: LangSmith tracing is decoupled and configured natively.
-*   **Production Readiness**: System tracing can be connected to enterprise dashboards without code changes by supplying the workspace API credentials.
+1. **Database Portability (SQLite to PostgreSQL)**:
+   * **Development**: Uses SQLite with `aiosqlite` for zero-configuration, self-contained local runs.
+   * **Scaling**: Built entirely with SQLAlchemy ORM, making it fully ready to migrate to a production database like PostgreSQL by simply updating the connection string in the `.env` file.
+2. **Local Model Caching**:
+   * **Development**: The local embedding model (`BAAI/bge-small-en-v1.5`) is automatically cached to local storage on the first ticket submission.
+   * **Scaling**: Once cached, all subsequent searches run locally and offline, eliminating external API latencies.
+3. **Modular Observability**:
+   * **Development**: LangSmith tracing is decoupled and optional.
+   * **Scaling**: The observability framework is built-in; enterprise tracking can be activated instantly by adding the corresponding API keys without modifying the code.
+4. **Session Management**:
+   * **Development**: Secure session authentication utilizes standard JWT tokens with a 7-day expiration.
+   * **Scaling**: The token lifecycle can be adjusted or integrated into enterprise OAuth/SSO systems by updating the core security module.
+5. **Storage Directory Configuration**:
+   * **Development**: Vector storage paths are resolved relative to the runtime workspace directory.
+   * **Scaling**: The storage path can be overridden via environment variables or volume mounts for clean containerized deployment (e.g., Docker).
